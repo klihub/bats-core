@@ -1242,3 +1242,19 @@ EOF
     [[ $FDS_LOG == *'otherfunc fds after: (0 1 2)'* ]] || false
     [[ $FDS_LOG == *'setup_file fds after: (0 1 2)'* ]] || false
 }
+
+@test "Don't fail with unbound variable for old bash when helper does 'set -u'." {
+    if [ "$((1000*$(echo "${BASH_VERSION%.[^.]*}" | tr '.' '+')))" -gt 4003 ]; then
+        skip "bash version ($BASH_VERSION) newer than 4.3"
+    fi
+    run -0 bats --jobs 4 --tap "$FIXTURE_ROOT/unbound-flags-with-old-bash-0.bats"
+    [ $status -eq 0 ]
+}
+
+@test "Don't fail with unbound variable for old bash when test does 'set -u'." {
+    if [ "$((1000*$(echo "${BASH_VERSION%.[^.]*}" | tr '.' '+')))" -gt 4003 ]; then
+        skip "bash version ($BASH_VERSION) newer than 4.3"
+    fi
+    run -0 bats --jobs 4 --tap "$FIXTURE_ROOT/unbound-flags-with-old-bash-1.bats"
+    [ $status -eq 0 ]
+}
